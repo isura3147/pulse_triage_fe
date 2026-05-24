@@ -5,7 +5,8 @@ import type {
   NutritionSupply, 
   SystemLog, 
   MasterHealthReportPayload, 
-  PublicHealthBroadcastPayload
+  PublicHealthBroadcastPayload,
+  Survivor
 } from '../types';
 import { pulseApi } from '../api/pulseApi';
 
@@ -43,6 +44,8 @@ export const useTerminalState = () => {
   const [lockdownActive, setLockdownActive] = useState(false);
   const [systemAlertActive, setSystemAlertActive] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
+  const [survivors, setSurvivors] = useState<Survivor[]>([]);
+  const [skillFilter, setSkillFilter] = useState<string>('');
   
   // Nexus report compiler variables
   const [nexusConsole, setNexusConsole] = useState<string[]>([
@@ -61,14 +64,16 @@ export const useTerminalState = () => {
     const loadApiData = async () => {
       try {
         setIsLoading(true);
-        const [patientsData, telemetryData, nutritionData] = await Promise.all([
+        const [patientsData, telemetryData, nutritionData, survivorsData] = await Promise.all([
           pulseApi.fetchPatients(),
           pulseApi.fetchEnvironmentalTelemetry(),
-          pulseApi.fetchNutritionSupply()
+          pulseApi.fetchNutritionSupply(),
+          pulseApi.fetchSurvivors()
         ]);
         setPatients(patientsData);
         setTelemetry(telemetryData);
         setNutrition(nutritionData);
+        setSurvivors(survivorsData);
 
         /*
         // REAL API INTEGRATION TRIGGER (Commented Out)
@@ -277,6 +282,16 @@ export const useTerminalState = () => {
     p.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const handleFilterSurvivors = useCallback(async (category: string) => {
+    setSkillFilter(category);
+    try {
+      const data = await pulseApi.fetchSurvivors(category || undefined);
+      setSurvivors(data);
+    } catch (error) {
+      console.error('Failed to filter survivors:', error);
+    }
+  }, []);
+
   return {
     activeTab,
     setActiveTab,
@@ -299,7 +314,10 @@ export const useTerminalState = () => {
     warningCount,
     stableCount,
     setPatients,
-    isLoading
+    isLoading,
+    survivors,
+    skillFilter,
+    handleFilterSurvivors
   };
 };
 export type UseTerminalStateReturn = ReturnType<typeof useTerminalState>;

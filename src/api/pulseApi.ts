@@ -3,7 +3,8 @@ import type {
   EnvironmentalTelemetry, 
   NutritionSupply, 
   MasterHealthReportPayload, 
-  PublicHealthBroadcastPayload 
+  PublicHealthBroadcastPayload,
+  Survivor
 } from '../types';
 
 const MOCK_PATIENTS: Patient[] = [
@@ -232,6 +233,101 @@ export const pulseApi = {
     await delay(400);
     console.log('%c[POST /api/education/broadcast]', 'color: #ffb4ab; font-weight: bold;', payload);
     return { success: true };
+  },
+
+  /**
+   * Fetches registered bunker survivors
+   */
+  async fetchSurvivors(skill?: string): Promise<Survivor[]> {
+    await delay(250);
+    
+    // Commented-out live HTTP fetch implementation:
+    /*
+    const url = skill 
+      ? `http://69.28.90.158:3001/api/survivors?skill=${skill}` 
+      : 'http://69.28.90.158:3001/api/survivors';
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('API: Failed to fetch survivors');
+    return response.json();
+    */
+
+    if (!skill) return JSON.parse(JSON.stringify(MOCK_SURVIVORS));
+    
+    // Filter by skill category
+    return MOCK_SURVIVORS.filter(s => 
+      s.skills.some(sk => sk.category.toLowerCase() === skill.toLowerCase())
+    );
   }
 };
+
+const MOCK_SURVIVORS: Survivor[] = [
+  {
+    id: "cmpjmeof3000001pfndghrb8q",
+    name: "Ayesha",
+    age: 22,
+    sector: "Archive",
+    registeredAt: "2026-05-24T10:14:22.239Z",
+    skills: []
+  },
+  {
+    id: "cmpjk6fdb000l23obzjqf97nc",
+    name: "Rosa Mendez",
+    age: 45,
+    sector: "Construction",
+    registeredAt: "2026-05-24T09:11:58.031Z",
+    skills: [
+      { id: "cmpjk6fdc000m23ob6ijg8i4g", name: "Masonry", category: "construction", survivorId: "cmpjk6fdb000l23obzjqf97nc" },
+      { id: "cmpjk6fdc000n23ob90fu52ej", name: "Plumbing", category: "construction", survivorId: "cmpjk6fdb000l23obzjqf97nc" },
+      { id: "cmpjk6fdc000o23ob8ugbmt2m", name: "Ventilation Systems", category: "engineering", survivorId: "cmpjk6fdb000l23obzjqf97nc" }
+    ]
+  },
+  {
+    id: "cmpjk6fd4000h23ob7ovnwx4b",
+    name: "James Whitfield",
+    age: 31,
+    sector: "Communications",
+    registeredAt: "2026-05-24T09:11:58.024Z",
+    skills: [
+      { id: "cmpjk6fd5000i23obav3zmr6q", name: "Network Administration", category: "tech", survivorId: "cmpjk6fd4000h23ob7ovnwx4b" },
+      { id: "cmpjk6fd5000j23ob6w0wlzns", name: "Radio Operations", category: "tech", survivorId: "cmpjk6fd4000h23ob7ovnwx4b" },
+      { id: "cmpjk6fd5000k23obssbg6xpn", name: "Encryption", category: "tech", survivorId: "cmpjk6fd4000h23ob7ovnwx4b" }
+    ]
+  },
+  {
+    id: "cmpjk6fcx000d23obumgiug12",
+    name: "Sarah Okonkwo",
+    age: 28,
+    sector: "Agriculture",
+    registeredAt: "2026-05-24T09:11:58.017Z",
+    skills: [
+      { id: "cmpjk6fcy000e23obzju76mai", name: "Hydroponics", category: "farming", survivorId: "cmpjk6fcx000d23obumgiug12" },
+      { id: "cmpjk6fcy000f23obp8jomvdm", name: "Seed Preservation", category: "farming", survivorId: "cmpjk6fcx000d23obumgiug12" },
+      { id: "cmpjk6fcy000g23obv4t3d3eo", name: "Soil Analysis", category: "farming", survivorId: "cmpjk6fcx000d23obumgiug12" }
+    ]
+  },
+  {
+    id: "cmpjk6fcr000923obgwtss1xb",
+    name: "Marcus Chen",
+    age: 35,
+    sector: "Engineering",
+    registeredAt: "2026-05-24T09:11:58.011Z",
+    skills: [
+      { id: "cmpjk6fcs000a23obg783q89a", name: "Electrical Systems", category: "engineering", survivorId: "cmpjk6fcr000923obgwtss1xb" },
+      { id: "cmpjk6fcs000b23ob4bqzhcs1", name: "Generator Repair", category: "engineering", survivorId: "cmpjk6fcr000923obgwtss1xb" },
+      { id: "cmpjk6fcs000c23ob0t1u6fyh", name: "Structural Assessment", category: "construction", survivorId: "cmpjk6fcr000923obgwtss1xb" }
+    ]
+  },
+  {
+    id: "cmpjk6fci000523obb0qyo7ky",
+    name: "Dr. Elena Vasquez",
+    age: 42,
+    sector: "Medical Bay",
+    registeredAt: "2026-05-24T09:11:58.002Z",
+    skills: [
+      { id: "cmpjk6fcj000623obg8en8rbt", name: "Trauma Surgery", category: "medical", survivorId: "cmpjk6fci000523obb0qyo7ky" },
+      { id: "cmpjk6fcj000723obc0p2vz8o", name: "Pharmacology", category: "medical", survivorId: "cmpjk6fci000523obb0qyo7ky" },
+      { id: "cmpjk6fcj000823ob2y25xugw", name: "Field Triage", category: "medical", survivorId: "cmpjk6fci000523obb0qyo7ky" }
+    ]
+  }
+];
 export default pulseApi;

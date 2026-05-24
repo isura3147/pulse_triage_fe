@@ -68,3 +68,19 @@ export interface SystemLog {
   type: string;
   status: 'COMPLETE' | 'ARCHIVED' | 'FAILED';
 }
+
+export interface SurvivorSkill {
+  id: string;
+  name: string;
+  category: string;
+  survivorId: string;
+}
+
+export interface Survivor {
+  id: string;
+  name: string;
+  age: number;
+  sector: string;
+  registeredAt: string;
+  skills: SurvivorSkill[];
+}

@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import type { SystemLog } from '../types';
+import type { SystemLog, Survivor } from '../types';
 
 interface NexusExportViewProps {
   logs: SystemLog[];
@@ -9,6 +9,9 @@ interface NexusExportViewProps {
   lockdownActive: boolean;
   criticalCount: number;
   stableCount: number;
+  survivors: Survivor[];
+  skillFilter: string;
+  onFilterSurvivors: (category: string) => void;
 }
 
 export const NexusExportView: React.FC<NexusExportViewProps> = ({
@@ -18,7 +21,10 @@ export const NexusExportView: React.FC<NexusExportViewProps> = ({
   handleGenerateReport,
   lockdownActive,
   criticalCount,
-  stableCount
+  stableCount,
+  survivors,
+  skillFilter,
+  onFilterSurvivors
 }) => {
   const consoleEndRef = useRef<HTMLDivElement>(null);
 
@@ -86,7 +92,7 @@ export const NexusExportView: React.FC<NexusExportViewProps> = ({
               {capacityPercent}%
             </div>
             <div className="font-label-caps text-[10px] text-outline-variant uppercase mt-1 tracking-wider">
-              RAW ACTIVE CHANNELS: 8
+              REGISTERED SURVIVORS: {survivors.length}
             </div>
           </div>
           <div className="mt-4">
@@ -282,6 +288,97 @@ export const NexusExportView: React.FC<NexusExportViewProps> = ({
         </div>
 
       </div>
+
+      {/* Bunker Personnel Registry */}
+      <div className="bg-surface-container border border-outline-variant flex flex-col overflow-hidden clipped-corner shrink-0 mt-6">
+        <div className="p-4 border-b border-outline-variant bg-surface-container-high flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 shrink-0">
+          <h2 className="font-headline-sm text-base text-on-surface uppercase flex items-center gap-2">
+            <span className="material-symbols-outlined text-primary text-base">groups</span>
+            Bunker Personnel Registry (NEXUS Node)
+          </h2>
+          <div className="flex items-center gap-2">
+            <span className="font-label-caps text-xs text-outline">FILTER_SKILLS:</span>
+            <select
+              value={skillFilter}
+              onChange={(e) => onFilterSurvivors(e.target.value)}
+              className="bg-surface-container-lowest border border-outline-variant px-3 py-1 font-body-md text-xs text-on-surface focus:outline-none focus:border-primary uppercase"
+            >
+              <option value="">ALL SKILL CATEGORIES</option>
+              <option value="medical">MEDICAL</option>
+              <option value="engineering">ENGINEERING</option>
+              <option value="farming">FARMING</option>
+              <option value="tech">TECH</option>
+              <option value="construction">CONSTRUCTION</option>
+            </select>
+          </div>
+        </div>
+        
+        <div className="overflow-x-auto max-h-[300px] overflow-y-auto">
+          <table className="w-full text-left font-body-md text-xs">
+            <thead className="font-label-caps text-label-caps text-outline bg-surface-container-highest uppercase border-b border-outline-variant sticky top-0 z-10">
+              <tr>
+                <th className="p-3 font-normal tracking-wider">Survivor ID</th>
+                <th className="p-3 font-normal tracking-wider">Name</th>
+                <th className="p-3 font-normal tracking-wider">Age</th>
+                <th className="p-3 font-normal tracking-wider">Sector</th>
+                <th className="p-3 font-normal tracking-wider">Registered At</th>
+                <th className="p-3 font-normal tracking-wider">Specialized Skills</th>
+              </tr>
+            </thead>
+            <tbody className="text-on-surface-variant">
+              {survivors.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="p-4 text-center text-outline-variant">
+                    &gt; NO SURVIVORS MATCHING QUERY FLAGS.
+                  </td>
+                </tr>
+              ) : (
+                survivors.map((survivor, idx) => (
+                  <tr 
+                    key={survivor.id} 
+                    className={`border-b border-surface-container-highest hover:bg-surface-container-high transition-colors ${
+                      idx % 2 === 1 ? 'bg-surface-container-low' : 'bg-transparent'
+                    }`}
+                  >
+                    <td className="p-3 font-mono text-primary select-text">{survivor.id}</td>
+                    <td className="p-3 font-bold text-on-surface select-text">{survivor.name}</td>
+                    <td className="p-3 font-mono">{survivor.age}</td>
+                    <td className="p-3 select-text">
+                      <span className="px-2 py-0.5 border border-outline/30 bg-surface-variant/20 rounded-sm">
+                        {survivor.sector.toUpperCase()}
+                      </span>
+                    </td>
+                    <td className="p-3 font-mono">{new Date(survivor.registeredAt).toLocaleString()}</td>
+                    <td className="p-3 select-text">
+                      <div className="flex flex-wrap gap-1.5">
+                        {survivor.skills.length === 0 ? (
+                          <span className="text-[10px] text-outline-variant italic">None</span>
+                        ) : (
+                          survivor.skills.map(sk => {
+                            let skillColor = 'border-primary/30 text-primary bg-primary/5';
+                            if (sk.category === 'medical') skillColor = 'border-error/30 text-error bg-error/5';
+                            if (sk.category === 'engineering' || sk.category === 'construction') skillColor = 'border-secondary/30 text-secondary bg-secondary/5';
+                            if (sk.category === 'farming') skillColor = 'border-outline/50 text-outline-variant bg-surface-variant/10';
+                            return (
+                              <span 
+                                key={sk.id}
+                                className={`inline-flex items-center text-[10px] border px-2 py-0.5 uppercase ${skillColor}`}
+                              >
+                                {sk.name}
+                              </span>
+                            );
+                          })
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
     </div>
   );
 };

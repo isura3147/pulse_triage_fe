@@ -25,7 +25,10 @@ const App: React.FC = () => {
     criticalCount,
     warningCount,
     stableCount,
-    setPatients
+    setPatients,
+    survivors,
+    skillFilter,
+    handleFilterSurvivors
   } = useTerminalState();
 
   return (
@@ -82,6 +85,9 @@ const App: React.FC = () => {
               lockdownActive={lockdownActive}
               criticalCount={criticalCount}
               stableCount={stableCount}
+              survivors={survivors}
+              skillFilter={skillFilter}
+              onFilterSurvivors={handleFilterSurvivors}
             />
           )}
         </main>
