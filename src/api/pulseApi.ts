@@ -59,6 +59,118 @@ const MOCK_PATIENTS: Patient[] = [
     timestamp: new Date().toISOString(),
     triageGroup: 'TRG_1',
     hrTrend: 'up'
+  },
+  {
+    patientId: 'P-004',
+    name: 'Arthur Smith',
+    age: 38,
+    triageLevel: 'yellow',
+    vitals: {
+      heartRate: 105,
+      bloodPressure: { sys: 140, dia: 90 },
+      spO2: 94,
+      temperature: 38.5,
+      respiratoryRate: 22
+    },
+    timestamp: new Date().toISOString(),
+    triageGroup: 'TRG_2',
+    hrTrend: 'stable'
+  },
+  {
+    patientId: 'P-005',
+    name: 'Evelyn Miller',
+    age: 64,
+    triageLevel: 'green',
+    vitals: {
+      heartRate: 72,
+      bloodPressure: { sys: 120, dia: 80 },
+      spO2: 98,
+      temperature: 36.6,
+      respiratoryRate: 16
+    },
+    timestamp: new Date().toISOString(),
+    triageGroup: 'TRG_3',
+    hrTrend: 'stable'
+  },
+  {
+    patientId: 'P-006',
+    name: 'Robert Davis',
+    age: 51,
+    triageLevel: 'green',
+    vitals: {
+      heartRate: 68,
+      bloodPressure: { sys: 118, dia: 75 },
+      spO2: 99,
+      temperature: 36.8,
+      respiratoryRate: 16
+    },
+    timestamp: new Date().toISOString(),
+    triageGroup: 'TRG_3',
+    hrTrend: 'stable'
+  },
+  {
+    patientId: 'P-007',
+    name: 'James Taylor',
+    age: 35,
+    triageLevel: 'yellow',
+    vitals: {
+      heartRate: 105,
+      bloodPressure: { sys: 130, dia: 85 },
+      spO2: 93,
+      temperature: 37.8,
+      respiratoryRate: 22
+    },
+    timestamp: new Date().toISOString(),
+    triageGroup: 'TRG_2',
+    hrTrend: 'up'
+  },
+  {
+    patientId: 'P-008',
+    name: 'Clara Wilson',
+    age: 22,
+    triageLevel: 'green',
+    vitals: {
+      heartRate: 75,
+      bloodPressure: { sys: 120, dia: 80 },
+      spO2: 98,
+      temperature: 36.6,
+      respiratoryRate: 16
+    },
+    timestamp: new Date().toISOString(),
+    triageGroup: 'TRG_3',
+    hrTrend: 'stable'
+  },
+  {
+    patientId: 'P-009',
+    name: 'Sarah Okonkwo',
+    age: 28,
+    triageLevel: 'green',
+    vitals: {
+      heartRate: 78,
+      bloodPressure: { sys: 115, dia: 75 },
+      spO2: 97,
+      temperature: 36.7,
+      respiratoryRate: 16
+    },
+    timestamp: new Date().toISOString(),
+    triageGroup: 'TRG_3',
+    hrTrend: 'stable'
+  },
+  {
+    patientId: 'P-010',
+    name: 'Marcus Chen',
+    age: 35,
+    triageLevel: 'yellow',
+    vitals: {
+      heartRate: 98,
+      bloodPressure: { sys: 125, dia: 80 },
+      spO2: 95,
+      temperature: 37.2,
+      respiratoryRate: 18
+    },
+    timestamp: new Date().toISOString(),
+    triageGroup: 'TRG_2',
+    hrTrend: 'stable'
   }
 ];
 
@@ -167,10 +279,11 @@ export const pulseApi = {
             const res = await fetch(`${BACKEND_BASE}/api/vitals?patientId=${p.patientId}`);
             if (res.ok) {
               const data = await res.json();
-              if (data.vitals && data.vitals.length > 0) {
-                const latest = data.vitals[0];
+              if ((data.vitals && data.vitals.length > 0) || data.name) {
+                const latest = data.vitals && data.vitals.length > 0 ? data.vitals[0] : {};
                 return {
                   ...p,
+                  name: data.name ?? p.name,
                   vitals: {
                     heartRate: latest.heartRate ?? p.vitals.heartRate,
                     bloodPressure: latest.bloodPressure ?? p.vitals.bloodPressure,
@@ -178,7 +291,7 @@ export const pulseApi = {
                     temperature: latest.temperature ?? p.vitals.temperature,
                     respiratoryRate: latest.respiratoryRate ?? p.vitals.respiratoryRate
                   },
-                  triageLevel: latest.triageLevel ?? p.triageLevel,
+                  triageLevel: data.triageLevel ?? latest.triageLevel ?? p.triageLevel,
                   timestamp: latest.timestamp ?? p.timestamp
                 };
               }
