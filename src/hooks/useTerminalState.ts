@@ -69,6 +69,26 @@ export const useTerminalState = () => {
         setPatients(patientsData);
         setTelemetry(telemetryData);
         setNutrition(nutritionData);
+
+        /*
+        // REAL API INTEGRATION TRIGGER (Commented Out)
+        // To query outbreak detection at start using patient collection:
+        pulseApi.runOutbreakDetect(patientsData).then(outbreak => {
+          if (outbreak.outbreakDetected) {
+            setLockdownActive(true);
+            setNexusConsole(logs => [
+              ...logs,
+              `> [${new Date().toLocaleTimeString()}] OUTBREAK DETECTED BY BACKEND DETECTOR Node.`,
+              `>   THREAT: ${outbreak.threatLevel.toUpperCase()} (AFFECTED: ${outbreak.affectedCount} PATIENTS)`,
+              `>   SYMPTOMS: ${outbreak.symptoms.join(', ')}`,
+              `>   RECOMMENDATION: ${outbreak.recommendation}`
+            ]);
+          }
+        }).catch(err => {
+          console.error("Outbreak Detection API Error:", err);
+        });
+        */
+
       } catch (error) {
         console.error('BUNKER_OS_v4.2 API Data Load Failure:', error);
       } finally {

@@ -10,6 +10,7 @@ const MOCK_PATIENTS: Patient[] = [
   {
     patientId: 'PX-928',
     name: 'Doe, John R.',
+    age: 42,
     triageLevel: 'red',
     vitals: {
       heartRate: 145,
@@ -25,6 +26,7 @@ const MOCK_PATIENTS: Patient[] = [
   {
     patientId: 'PX-401',
     name: 'Unknown Female',
+    age: 29,
     triageLevel: 'red',
     vitals: {
       heartRate: 42,
@@ -40,6 +42,7 @@ const MOCK_PATIENTS: Patient[] = [
   {
     patientId: 'PX-112',
     name: 'Smith, Arthur',
+    age: 38,
     triageLevel: 'yellow',
     vitals: {
       heartRate: 110,
@@ -55,6 +58,7 @@ const MOCK_PATIENTS: Patient[] = [
   {
     patientId: 'PX-993',
     name: 'Miller, Evelyn',
+    age: 64,
     triageLevel: 'green',
     vitals: {
       heartRate: 72,
@@ -70,6 +74,7 @@ const MOCK_PATIENTS: Patient[] = [
   {
     patientId: 'PX-742',
     name: 'Davis, Robert',
+    age: 51,
     triageLevel: 'green',
     vitals: {
       heartRate: 68,
@@ -85,6 +90,7 @@ const MOCK_PATIENTS: Patient[] = [
   {
     patientId: 'PX-442',
     name: 'Taylor, James',
+    age: 35,
     triageLevel: 'yellow',
     vitals: {
       heartRate: 105,
@@ -100,6 +106,7 @@ const MOCK_PATIENTS: Patient[] = [
   {
     patientId: 'PX-109',
     name: 'Wilson, Clara',
+    age: 22,
     triageLevel: 'green',
     vitals: {
       heartRate: 75,
@@ -135,6 +142,56 @@ const MOCK_NUTRITION: NutritionSupply = {
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export const pulseApi = {
+  // ==========================================
+  // REAL BACKEND ROUTE HANDLERS (Next.js /api)
+  // ==========================================
+  // Uncomment the block below and comment out the mock implementations to wire directly:
+  /*
+  async fetchPatients(): Promise<Patient[]> {
+    // Next.js APP router endpoint (requires custom route for list, or fallback list)
+    const response = await fetch('/api/patients');
+    if (!response.ok) throw new Error('API: Failed to fetch patients list');
+    return response.json();
+  },
+
+  async saveVitals(patient: Patient): Promise<{ message: string }> {
+    // Saves patient vitals into Firebase Firestore db
+    const response = await fetch('/api/vitals', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ patient })
+    });
+    if (!response.ok) throw new Error('API: Failed to save patient vitals');
+    return response.json();
+  },
+
+  async evaluateTriage(patient: Patient) {
+    // Runs vital scoring in Next.js, saves output, reports to Nexus
+    const response = await fetch('/api/triage', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ patient })
+    });
+    if (!response.ok) throw new Error('API: Failed to run triage score');
+    return response.json();
+  },
+
+  async runOutbreakDetect(patients: Patient[]) {
+    // Runs outbreak analysis against the patient ward
+    const response = await fetch('/api/outbreak-detect', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ patients })
+    });
+    if (!response.ok) throw new Error('API: Failed to analyze outbreak');
+    return response.json();
+  },
+  */
+
+  // ==========================================
+  // MOCK TELEMETRY IMPLEMENTATIONS
+  // ==========================================
+
   /**
    * Fetches internal pulse patient records
    */

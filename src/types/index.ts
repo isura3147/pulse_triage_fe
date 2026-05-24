@@ -16,6 +16,7 @@ export interface PatientVitals {
 export interface Patient {
   patientId: string;
   name: string;
+  age: number;
   triageLevel: TriageLevel;
   vitals: PatientVitals;
   timestamp: string;
