@@ -75,8 +75,7 @@ export const useTerminalState = () => {
         setNutrition(nutritionData);
         setSurvivors(survivorsData);
 
-        /*
-        // REAL API INTEGRATION TRIGGER (Commented Out)
+        // REAL API INTEGRATION TRIGGER
         // To query outbreak detection at start using patient collection:
         pulseApi.runOutbreakDetect(patientsData).then(outbreak => {
           if (outbreak.outbreakDetected) {
@@ -92,7 +91,6 @@ export const useTerminalState = () => {
         }).catch(err => {
           console.error("Outbreak Detection API Error:", err);
         });
-        */
 
       } catch (error) {
         console.error('BUNKER_OS_v4.2 API Data Load Failure:', error);

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import type { Patient, PatientVitals } from '../types';
-// import { pulseApi } from '../api/pulseApi';
+import { pulseApi } from '../api/pulseApi';
 
 interface TriageFeedViewProps {
   filteredPatients: Patient[];
@@ -47,8 +47,7 @@ export const TriageFeedView: React.FC<TriageFeedViewProps> = ({
             updated.triageLevel = 'green';
             updated.triageGroup = 'TRG_3';
           }
-          /*
-          // REAL API PERSISTENCE TRIGGER (Commented Out)
+          // REAL API PERSISTENCE TRIGGER
           // To save vital override to Firestore and execute triage scoring backend-side:
           pulseApi.saveVitals(updated).then(res => {
             console.log("Firestore: Vitals saved successfully", res.message);
@@ -61,7 +60,6 @@ export const TriageFeedView: React.FC<TriageFeedViewProps> = ({
           }).catch(err => {
             console.error("Triage API Error:", err);
           });
-          */
 
           return updated;
         }
@@ -87,15 +85,13 @@ export const TriageFeedView: React.FC<TriageFeedViewProps> = ({
             }
           };
           
-          /*
-          // REAL API PERSISTENCE TRIGGER (Commented Out)
+          // REAL API PERSISTENCE TRIGGER
           // To save blood pressure overrides into Firebase Firestore:
           pulseApi.saveVitals(updated).then(res => {
             console.log("Firestore: BP saved successfully", res.message);
           }).catch(err => {
             console.error("Firestore Error:", err);
           });
-          */
 
           return updated;
         }

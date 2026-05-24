@@ -7,80 +7,20 @@ import type {
   Survivor
 } from '../types';
 
+// API Bases
+const BACKEND_BASE = 'https://pulse-medical-triage.vercel.app';
+const SURVIVORS_BASE = 'http://69.28.90.158:3001';
+
 const MOCK_PATIENTS: Patient[] = [
   {
-    patientId: 'PX-928',
-    name: 'Doe, John R.',
-    age: 42,
-    triageLevel: 'red',
-    vitals: {
-      heartRate: 145,
-      bloodPressure: { sys: 80, dia: 50 },
-      spO2: 88,
-      temperature: 39.5,
-      respiratoryRate: 30
-    },
-    timestamp: new Date().toISOString(),
-    triageGroup: 'TRG_1',
-    hrTrend: 'up'
-  },
-  {
-    patientId: 'PX-401',
-    name: 'Unknown Female',
-    age: 29,
-    triageLevel: 'red',
-    vitals: {
-      heartRate: 42,
-      bloodPressure: { sys: 70, dia: 40 },
-      spO2: 85,
-      temperature: 34.1,
-      respiratoryRate: 20
-    },
-    timestamp: new Date().toISOString(),
-    triageGroup: 'TRG_1',
-    hrTrend: 'down'
-  },
-  {
-    patientId: 'PX-112',
-    name: 'Smith, Arthur',
-    age: 38,
-    triageLevel: 'yellow',
-    vitals: {
-      heartRate: 110,
-      bloodPressure: { sys: 140, dia: 90 },
-      spO2: 94,
-      temperature: 38.5,
-      respiratoryRate: 22
-    },
-    timestamp: new Date().toISOString(),
-    triageGroup: 'TRG_2',
-    hrTrend: 'stable'
-  },
-  {
-    patientId: 'PX-993',
-    name: 'Miller, Evelyn',
-    age: 64,
+    patientId: 'P-001',
+    name: 'Elias Ward',
+    age: 32,
     triageLevel: 'green',
     vitals: {
-      heartRate: 72,
+      heartRate: 82,
       bloodPressure: { sys: 120, dia: 80 },
       spO2: 98,
-      temperature: 36.6,
-      respiratoryRate: 16
-    },
-    timestamp: new Date().toISOString(),
-    triageGroup: 'TRG_3',
-    hrTrend: 'stable'
-  },
-  {
-    patientId: 'PX-742',
-    name: 'Davis, Robert',
-    age: 51,
-    triageLevel: 'green',
-    vitals: {
-      heartRate: 68,
-      bloodPressure: { sys: 118, dia: 75 },
-      spO2: 99,
       temperature: 36.8,
       respiratoryRate: 16
     },
@@ -89,15 +29,15 @@ const MOCK_PATIENTS: Patient[] = [
     hrTrend: 'stable'
   },
   {
-    patientId: 'PX-442',
-    name: 'Taylor, James',
-    age: 35,
+    patientId: 'P-002',
+    name: 'Mira Kane',
+    age: 28,
     triageLevel: 'yellow',
     vitals: {
-      heartRate: 105,
+      heartRate: 110,
       bloodPressure: { sys: 130, dia: 85 },
-      spO2: 93,
-      temperature: 37.8,
+      spO2: 91,
+      temperature: 38.1,
       respiratoryRate: 22
     },
     timestamp: new Date().toISOString(),
@@ -105,20 +45,20 @@ const MOCK_PATIENTS: Patient[] = [
     hrTrend: 'up'
   },
   {
-    patientId: 'PX-109',
-    name: 'Wilson, Clara',
-    age: 22,
-    triageLevel: 'green',
+    patientId: 'P-003',
+    name: 'Jonas Pike',
+    age: 45,
+    triageLevel: 'red',
     vitals: {
-      heartRate: 75,
-      bloodPressure: { sys: 120, dia: 80 },
-      spO2: 98,
-      temperature: 36.6,
-      respiratoryRate: 16
+      heartRate: 140,
+      bloodPressure: { sys: 80, dia: 50 },
+      spO2: 82,
+      temperature: 40.2,
+      respiratoryRate: 30
     },
     timestamp: new Date().toISOString(),
-    triageGroup: 'TRG_3',
-    hrTrend: 'stable'
+    triageGroup: 'TRG_1',
+    hrTrend: 'up'
   }
 ];
 
@@ -137,127 +77,6 @@ const MOCK_NUTRITION: NutritionSupply = {
   averageCaloricIntake: 1800,
   waterRation: 2.0,
   foodReservesCritical: false,
-};
-
-// Simulated network latency helper
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-
-export const pulseApi = {
-  // ==========================================
-  // REAL BACKEND ROUTE HANDLERS (Next.js /api)
-  // ==========================================
-  // Uncomment the block below and comment out the mock implementations to wire directly:
-  /*
-  async fetchPatients(): Promise<Patient[]> {
-    // Next.js APP router endpoint (requires custom route for list, or fallback list)
-    const response = await fetch('/api/patients');
-    if (!response.ok) throw new Error('API: Failed to fetch patients list');
-    return response.json();
-  },
-
-  async saveVitals(patient: Patient): Promise<{ message: string }> {
-    // Saves patient vitals into Firebase Firestore db
-    const response = await fetch('/api/vitals', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ patient })
-    });
-    if (!response.ok) throw new Error('API: Failed to save patient vitals');
-    return response.json();
-  },
-
-  async evaluateTriage(patient: Patient) {
-    // Runs vital scoring in Next.js, saves output, reports to Nexus
-    const response = await fetch('/api/triage', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ patient })
-    });
-    if (!response.ok) throw new Error('API: Failed to run triage score');
-    return response.json();
-  },
-
-  async runOutbreakDetect(patients: Patient[]) {
-    // Runs outbreak analysis against the patient ward
-    const response = await fetch('/api/outbreak-detect', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ patients })
-    });
-    if (!response.ok) throw new Error('API: Failed to analyze outbreak');
-    return response.json();
-  },
-  */
-
-  // ==========================================
-  // MOCK TELEMETRY IMPLEMENTATIONS
-  // ==========================================
-
-  /**
-   * Fetches internal pulse patient records
-   */
-  async fetchPatients(): Promise<Patient[]> {
-    await delay(300); // Simulate network latency
-    return JSON.parse(JSON.stringify(MOCK_PATIENTS));
-  },
-
-  /**
-   * Fetches environmental telemetry readings
-   */
-  async fetchEnvironmentalTelemetry(): Promise<EnvironmentalTelemetry> {
-    await delay(200);
-    return JSON.parse(JSON.stringify(MOCK_ENVIRONMENTAL));
-  },
-
-  /**
-   * Fetches global caloric/water ration supplies
-   */
-  async fetchNutritionSupply(): Promise<NutritionSupply> {
-    await delay(200);
-    return JSON.parse(JSON.stringify(MOCK_NUTRITION));
-  },
-
-  /**
-   * Pushes master health reports to Nexus Governance endpoint
-   */
-  async postMasterHealthReport(payload: MasterHealthReportPayload): Promise<{ success: boolean }> {
-    await delay(500);
-    console.log('%c[POST /api/nexus/report]', 'color: #00dbe9; font-weight: bold;', payload);
-    return { success: true };
-  },
-
-  /**
-   * Triggers public health alarms to Sector Education nodes
-   */
-  async postPublicHealthBroadcast(payload: PublicHealthBroadcastPayload): Promise<{ success: boolean }> {
-    await delay(400);
-    console.log('%c[POST /api/education/broadcast]', 'color: #ffb4ab; font-weight: bold;', payload);
-    return { success: true };
-  },
-
-  /**
-   * Fetches registered bunker survivors
-   */
-  async fetchSurvivors(skill?: string): Promise<Survivor[]> {
-    await delay(250);
-    
-    // Commented-out live HTTP fetch implementation:
-    /*
-    const url = skill 
-      ? `http://69.28.90.158:3001/api/survivors?skill=${skill}` 
-      : 'http://69.28.90.158:3001/api/survivors';
-    const response = await fetch(url);
-    if (!response.ok) throw new Error('API: Failed to fetch survivors');
-    return response.json();
-    */
-
-    if (!skill) return JSON.parse(JSON.stringify(MOCK_SURVIVORS));
-    
-    // Filter by skill category
-    return MOCK_SURVIVORS.filter(s => 
-      s.skills.some(sk => sk.category.toLowerCase() === skill.toLowerCase())
-    );
-  }
 };
 
 const MOCK_SURVIVORS: Survivor[] = [
@@ -330,4 +149,144 @@ const MOCK_SURVIVORS: Survivor[] = [
     ]
   }
 ];
+
+// Simulated network latency helper
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+export const pulseApi = {
+  /**
+   * Fetches internal pulse patient records.
+   * Hits the Firestore database logs for each patient to retrieve the latest vitals, falling back to mock files if offline.
+   */
+  async fetchPatients(): Promise<Patient[]> {
+    try {
+      const results = await Promise.all(
+        MOCK_PATIENTS.map(async (p) => {
+          try {
+            // Firestore app/api returns last 10 logs
+            const res = await fetch(`${BACKEND_BASE}/api/vitals?patientId=${p.patientId}`);
+            if (res.ok) {
+              const data = await res.json();
+              if (data.vitals && data.vitals.length > 0) {
+                const latest = data.vitals[0];
+                return {
+                  ...p,
+                  vitals: {
+                    heartRate: latest.heartRate ?? p.vitals.heartRate,
+                    bloodPressure: latest.bloodPressure ?? p.vitals.bloodPressure,
+                    spO2: latest.spO2 ?? p.vitals.spO2,
+                    temperature: latest.temperature ?? p.vitals.temperature,
+                    respiratoryRate: latest.respiratoryRate ?? p.vitals.respiratoryRate
+                  },
+                  triageLevel: latest.triageLevel ?? p.triageLevel,
+                  timestamp: latest.timestamp ?? p.timestamp
+                };
+              }
+            }
+          } catch (err) {
+            console.warn(`Firestore GET failed for patient ${p.patientId}. Using mock default.`, err);
+          }
+          return p;
+        })
+      );
+      return results;
+    } catch (error) {
+      console.warn('API: fetchPatients failure, returning mock data.', error);
+      return JSON.parse(JSON.stringify(MOCK_PATIENTS));
+    }
+  },
+
+  /**
+   * Saves patient vitals into Firebase Firestore db via the live Vercel endpoint.
+   */
+  async saveVitals(patient: Patient): Promise<{ message: string }> {
+    const response = await fetch(`${BACKEND_BASE}/api/vitals`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ patient })
+    });
+    if (!response.ok) throw new Error('API: Failed to save patient vitals');
+    return response.json();
+  },
+
+  /**
+   * Evaluates patient vitals on the server, saving the results and reporting status to Nexus Governance.
+   */
+  async evaluateTriage(patient: Patient) {
+    const response = await fetch(`${BACKEND_BASE}/api/triage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ patient })
+    });
+    if (!response.ok) throw new Error('API: Failed to run triage score');
+    return response.json();
+  },
+
+  /**
+   * Submits active patients list to evaluate outbreak possibilities.
+   */
+  async runOutbreakDetect(patients: Patient[]) {
+    const response = await fetch(`${BACKEND_BASE}/api/outbreak-detect`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ patients })
+    });
+    if (!response.ok) throw new Error('API: Failed to analyze outbreak');
+    return response.json();
+  },
+
+  /**
+   * Fetches environmental telemetry readings (Mocked)
+   */
+  async fetchEnvironmentalTelemetry(): Promise<EnvironmentalTelemetry> {
+    await delay(200);
+    return JSON.parse(JSON.stringify(MOCK_ENVIRONMENTAL));
+  },
+
+  /**
+   * Fetches global caloric/water ration supplies (Mocked)
+   */
+  async fetchNutritionSupply(): Promise<NutritionSupply> {
+    await delay(200);
+    return JSON.parse(JSON.stringify(MOCK_NUTRITION));
+  },
+
+  /**
+   * Pushes master health reports to Nexus Governance endpoint (Action 3.1)
+   */
+  async postMasterHealthReport(payload: MasterHealthReportPayload): Promise<{ success: boolean }> {
+    await delay(500);
+    console.log('%c[POST /api/nexus/report]', 'color: #00dbe9; font-weight: bold;', payload);
+    return { success: true };
+  },
+
+  /**
+   * Triggers public health alarms to Sector Education nodes (Action 3.2)
+   */
+  async postPublicHealthBroadcast(payload: PublicHealthBroadcastPayload): Promise<{ success: boolean }> {
+    await delay(400);
+    console.log('%c[POST /api/education/broadcast]', 'color: #ffb4ab; font-weight: bold;', payload);
+    return { success: true };
+  },
+
+  /**
+   * Fetches registered bunker survivors from the live microservice.
+   */
+  async fetchSurvivors(skill?: string): Promise<Survivor[]> {
+    try {
+      const url = skill 
+        ? `${SURVIVORS_BASE}/api/survivors?skill=${skill}` 
+        : `${SURVIVORS_BASE}/api/survivors`;
+      const response = await fetch(url);
+      if (!response.ok) throw new Error('API: Failed to fetch survivors');
+      return await response.json();
+    } catch (error) {
+      console.warn('API: Survivors fetch failed. Falling back to mock data.', error);
+      if (!skill) return JSON.parse(JSON.stringify(MOCK_SURVIVORS));
+      return MOCK_SURVIVORS.filter(s => 
+        s.skills.some(sk => sk.category.toLowerCase() === skill.toLowerCase())
+      );
+    }
+  }
+};
 export default pulseApi;
