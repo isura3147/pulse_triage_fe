@@ -1,0 +1,152 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-background text-on-surface font-body-md h-screen w-screen overflow-hidden select-none relative;
+  }
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0e0e0f;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3b494b;
+  border-radius: 0px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #00dbe9;
+  box-shadow: 0 0 8px #00dbe9;
+}
+
+/* CRT Scanline Effect Overlay */
+.scanlines::after {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%, 
+    rgba(0, 0, 0, 0.2) 50%
+  ), 
+  linear-gradient(
+    90deg, 
+    rgba(255, 0, 0, 0.04), 
+    rgba(0, 255, 0, 0.01), 
+    rgba(0, 0, 255, 0.04)
+  );
+  z-index: 9999;
+  background-size: 100% 3px, 3px 100%;
+  pointer-events: none;
+}
+
+/* Flicker animation for analog feel */
+@keyframes crt-flicker {
+  0% { opacity: 0.99; }
+  50% { opacity: 1; }
+  100% { opacity: 0.99; }
+}
+
+.crt-bloom {
+  animation: crt-flicker 0.15s infinite;
+}
+
+/* Glow effects */
+.glow-effect {
+  box-shadow: 0 0 15px rgba(0, 219, 233, 0.25);
+}
+
+.glow-effect-secondary {
+  box-shadow: 0 0 15px rgba(254, 183, 0, 0.2);
+}
+
+.glow-alert {
+  box-shadow: 0 0 20px rgba(255, 180, 171, 0.35);
+  animation: pulse-border-red 2s infinite;
+}
+
+@keyframes pulse-border-red {
+  0% {
+    box-shadow: 0 0 10px rgba(255, 180, 171, 0.2);
+    border-color: rgba(255, 180, 171, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(255, 180, 171, 0.6);
+    border-color: rgba(255, 180, 171, 1);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(255, 180, 171, 0.2);
+    border-color: rgba(255, 180, 171, 0.7);
+  }
+}
+
+/* Blinking terminal cursor */
+.terminal-cursor::after {
+  content: '_';
+  animation: blink 1s step-start infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+/* Grid background pattern */
+.grid-pattern {
+  background-image: 
+    linear-gradient(to right, rgba(132, 148, 149, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(132, 148, 149, 0.04) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Segmented Pulse Waveform (ECG Animation) */
+@keyframes ecg-pulse {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.pulse-line {
+  background: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 10px,
+    #00dbe9 10px,
+    #00dbe9 12px
+  );
+  height: 8px;
+  width: 100%;
+  opacity: 0.4;
+}
+
+.pulse-line-critical {
+  background: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 5px,
+    #ffb4ab 5px,
+    #ffb4ab 7px
+  );
+  height: 8px;
+  width: 100%;
+  opacity: 0.7;
+}
+
+/* Octagonal header / Clipped corner button style */
+.clipped-corner {
+  clip-path: polygon(8px 0%, calc(100% - 8px) 0%, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 0% calc(100% - 8px), 0% 8px);
+}
+
+.clipped-corner-sm {
+  clip-path: polygon(4px 0%, calc(100% - 4px) 0%, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 0% calc(100% - 4px), 0% 4px);
+}
